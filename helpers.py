@@ -35,6 +35,7 @@ class wSimple:
 
     r = requests.post(url, data=payload, headers=headers)
     data = r.json()
+    #print(data)
 
     access_token = data['access_token']
     refresh_token = data['refresh_token']

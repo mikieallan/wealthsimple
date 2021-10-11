@@ -2,10 +2,10 @@ from helpers import wSimple
 import pprint
 
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 if(DEBUG_MODE):
-	tradeToken = "Bearer prOQqeZTfH5kKUhy0bjGL6HZhNuc_q6IW6Ei8LlbpJw"
+	tradeToken = "Bearer gAFS16IQEBCs-2Jim1sfLDI7jFYkHZjSubuttJ4W05k"
 
 else:
 	USE_ENV = str(input("\n\nDo you want to use preconfigured values (y/n)?\n\n>>> "))
@@ -38,8 +38,9 @@ else:
 
 
 ### UNCOMMENT THE BELOW LINE TO GET THE TRADE TOKEN TO USE DEBUG MODE
-print(tradeToken)
+#print(tradeToken)
 ###
+
 
 
 # Set up variables, get account information
