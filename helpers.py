@@ -2,7 +2,8 @@ import requests
 import sys
 import json
 import pprint
-from ./env import *
+from env import *
+from config import *
 
 
 class wSimple:

@@ -36,8 +36,11 @@ else:
 
 	tradeToken = wSimple.switchToTrade(token)
 
+
 ### UNCOMMENT THE BELOW LINE TO GET THE TRADE TOKEN TO USE DEBUG MODE
-#print(tradeToken)
+print(tradeToken)
+###
+
 
 # Set up variables, get account information
 watchlist = wSimple.getWatchlist(tradeToken)
