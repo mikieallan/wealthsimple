@@ -48,7 +48,6 @@ class wSimple:
 
     return bearer
 
-
   ### SWITCH TO TRADE
   def switchToTrade(prev_token):
     url = BASE_URL + SWITCH_ENDPOINT
@@ -70,7 +69,6 @@ class wSimple:
 
     return bearer
 
-
   ### GET WATCHLIST
   def getWatchlist(token):
     url = TRADE_BASE_URL + WATCHLIST_ENDPOINT
@@ -87,7 +85,6 @@ class wSimple:
     return securities
 
   ### GET ACCOUNT HOLDINGS
-
   def getAccountHoldings(token):
 
     url = TRADE_BASE_URL + ACCOUNT_LIST_ENDPOINT
@@ -113,7 +110,6 @@ class wSimple:
     return my_holdings
 
   ### GET POSITIONS
-
   def getPositions(token, my_holdings):
 
     url = TRADE_BASE_URL + POSITIONS_ENDPOINT
@@ -147,6 +143,7 @@ class wSimple:
 
     return my_holdings
 
+  ### EXECUTE MARKET BUY ORDER
   def buy(token, acc_id, sec_id, quantity, price):
     url = TRADE_BASE_URL + ORDERS_ENDPOINT
 
@@ -253,9 +250,9 @@ class wSimple:
     sorted_list = sorted(sorted_list, key=lambda x: (etf_id_dict[x]['delta_to_target']))
 
     if (print_current):
-      print("Deltas to target:")
+      print("\n\nDeltas to target (where delta = (current % - desired % ) / desired % ):")
       for i in range(len(sorted_list)):
-        print(etf_id_dict[sorted_list[i]]['symbol'] + ": " + str(round(etf_id_dict[sorted_list[i]]['delta_to_target'],2)))
+        print(etf_id_dict[sorted_list[i]]['symbol'] + ": " + str(round(etf_id_dict[sorted_list[i]]['delta_to_target']*100,2)))
     
 
     for key in etf_id_dict:
