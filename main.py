@@ -70,16 +70,34 @@ for key in my_holdings:
 
 index = ord(input("\n\n>>> ").upper()) - 65
 my_holding_keys = list(my_holdings.keys())
-etf_id_dict= wSimple.getCurrentPortfolioBalance(my_holding_keys[index], etf_dict, my_holdings)
+account_of_interest = my_holding_keys[index]
+etf_id_dict= wSimple.getCurrentPortfolioBalance(account_of_interest, etf_dict, my_holdings)
 
 
-amount_to_contribute = int(input("\n\nAmount to contribute:\n\n>>> "))
-etfs_to_purchase = wSimple.getSharesToPurchase(my_holdings[my_holding_keys[0]], etf_id_dict, amount_to_contribute)
+amount_to_contribute = int(input("\n\nAmount to use:\n\n>>> "))
+etfs_to_purchase, money_remaining = wSimple.getSharesToPurchase(my_holdings[my_holding_keys[0]], etf_id_dict, amount_to_contribute, True)
 
 
-print("If you want to use $" + str(amount_to_contribute) + ", you should purchase:\n")
+print("\n\nIf you want to use $" + str(amount_to_contribute) + ", you should purchase:\n")
 for key in etfs_to_purchase:
 	if (etf_id_dict[key]['to_buy'] != 0):
-		print(etf_id_dict[key]['symbol'] + ": " + str(etf_id_dict[key]['to_buy']) + " at $" + str(etf_id_dict[key]['price']))
+		print(etf_id_dict[key]['symbol'] + ": " + str(etf_id_dict[key]['to_buy']) + " at $" + str(etf_id_dict[key]['price']) + " for " + str(round(etf_id_dict[key]['to_buy'] * etf_id_dict[key]['price'],2)))
+
+print("\nWhich will leave $" + str(round(money_remaining,2)) + " in cash.")
+
+to_purchase = input(str("\n\nDo you want to buy the above securities (y / n)?\n\n>>> ")).upper()
+
+if (to_purchase == "Y"):
+	for key in etfs_to_purchase:
+		if (etf_id_dict[key]['to_buy'] != 0):
+			acc_id = account_of_interest
+			sec_id = key
+			quantity = etf_id_dict[key]['to_buy']
+			price = etf_id_dict[key]['price']
+			data = wSimple.buy(tradeToken, acc_id, sec_id, quantity, price)
+			print("\n" + data['symbol'] + ": " + str(data['quantity']) + " purchased from " + data['account_id'])
+
+else:
+	print("\nNothing purchased\n")
 
 

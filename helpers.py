@@ -147,6 +147,33 @@ class wSimple:
 
     return my_holdings
 
+  def buy(token, acc_id, sec_id, quantity, price):
+    url = TRADE_BASE_URL + ORDERS_ENDPOINT
+
+    headers = {
+        "content-type": "application/json",
+        "authorization": token,
+    }
+
+    payload = json.dumps(dict(
+        account_id = acc_id,
+        security_id = sec_id,
+        order_type = "buy_quantity",
+        order_sub_type = "market",
+        time_in_force = "day",
+        market_value = price,
+        quantity = quantity,
+        limit_price = round(price * 1.05,2)
+    ))
+
+    # print(url)
+    # pprint.pprint(payload)
+    # pprint.pprint(headers)
+
+    r = requests.post(url, data=payload, headers=headers)
+    data = r.json()
+
+    return data
 
 # NO EXTERNAL CALLS
 
@@ -201,7 +228,7 @@ class wSimple:
 
 
   ### CALCULATE SHARES TO PURCHASE
-  def getSharesToPurchase(acct_holdings, etf_id_dict, amount_to_contribute):
+  def getSharesToPurchase(acct_holdings, etf_id_dict, amount_to_contribute, print_current):
 
     # Get amount to contribue 
     
@@ -225,8 +252,10 @@ class wSimple:
     sorted_list = list(etf_id_dict.keys())
     sorted_list = sorted(sorted_list, key=lambda x: (etf_id_dict[x]['delta_to_target']))
 
-    # for i in range(len(sorted_list)):
-    #   print(etf_id_dict[sorted_list[i]]['symbol'] + ": " + str(etf_id_dict[sorted_list[i]]['delta_to_target']))
+    if (print_current):
+      print("Deltas to target:")
+      for i in range(len(sorted_list)):
+        print(etf_id_dict[sorted_list[i]]['symbol'] + ": " + str(round(etf_id_dict[sorted_list[i]]['delta_to_target'],2)))
     
 
     for key in etf_id_dict:
@@ -235,11 +264,7 @@ class wSimple:
     # while there's money remaining, continue looping
 
     while (money_remaining >= cheapest_buy):
-
-      # print("money_remaining: " + str(money_remaining))
-
       for i in range(len(sorted_list)):
-        # print("money_remaining: " + str(money_remaining))
 
         # Check if affordable
         if etf_id_dict[sorted_list[i]]['price'] <= money_remaining: 
@@ -261,15 +286,6 @@ class wSimple:
           # for i in range(len(sorted_list)):
           #   print(etf_id_dict[sorted_list[i]]['symbol'] + ": " + str(round(etf_id_dict[sorted_list[i]]['delta_to_target'],3)))
     
-          break;
+          break
 
-        
-    # print("\n")  
-    # for key in etf_id_dict:
-    #   print(etf_id_dict[key]['symbol'] + ": " + str(etf_id_dict[key]['to_buy']))
-
-    return etf_id_dict
-
-    
-
-
+    return etf_id_dict, money_remaining
