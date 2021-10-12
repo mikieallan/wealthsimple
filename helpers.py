@@ -16,12 +16,14 @@ class wSimple:
     if (otp == 0):
       headers = {
           "Content-Type": "application/json",
-          "x-wealthsimple-otp-claim": OTP_CLAIM
+          "x-wealthsimple-otp-claim": OTP_CLAIM,
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
       }
     else:
       headers = {
           "Content-Type": "application/json",
-          "x-wealthsimple-otp": otp + ";remember=true"
+          "x-wealthsimple-otp": otp + ";remember=true",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
       }
 
     payload = json.dumps(dict(
