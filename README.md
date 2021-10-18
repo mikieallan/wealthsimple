@@ -1,7 +1,7 @@
 # Wealthsimple
 This project was built by inspecting network traffic on the Wealthsimple website to reverse engineer the API calls. 
 
-The objective of this project is to automate the purchasing of a pre-defined portfolio and complete the auto-balancing. 
+The objective of this project is to automate the purchasing of a pre-defined portfolio and complete the auto-balancing through market buys.
 
 ## Set up 
 There are several user specific variables that need to be configured, including username, password, OTP_CLAIM, and the user's pre-defined portfolio. The OTP_CLAIM is a trusted token that allows the user to bypass the need for Google Authenticator for 30 days at a time. All of these should be done in an `config.py` file in this folder.
@@ -32,10 +32,11 @@ ETF_LIST = {
 * The portfolio percentages are assumed to add up to 1, and are not verified
 * All of the items in the ETF list will be in your watchlist
 * The user has already purchased (no preventation logic has been put in for initial purchase, but it should work. However, has not be investigated as it's not relevant for me)
+* The transaction will not use 100% of the available cash, as market buys impose a 5% limit which could cause issues for the last transaction
 
 ## Running
 
-Once you have configured the appropriate variables, you can cd into this repoistory, run the below command, and follow the prompts.
+Once you have cloned this repo and set up both the `config` and `env` files, you can cd into this repoistory, run the below command, and follow the prompts.
 
 ```shell
 python main.py
