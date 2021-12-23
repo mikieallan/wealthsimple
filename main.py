@@ -10,7 +10,7 @@ import pprint
 DEBUG_MODE = False
 
 if(DEBUG_MODE):
-	tradeToken = "Bearer gAFS16IQEBCs-2Jim1sfLDI7jFYkHZjSubuttJ4W05k"
+	tradeToken = "Bearer xxx"
 
 else:
 	USE_ENV = str(input("\n\nDo you want to use preconfigured values (Y/N)?\n>>> ")).upper()
