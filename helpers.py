@@ -128,10 +128,8 @@ class ws_helpers:
           money_remaining -= etf_id_dict[sorted_list[i]]['price']
           updated_value = etf_id_dict[sorted_list[i]]['price']+etf_id_dict[sorted_list[i]]['value']
           etf_id_dict[sorted_list[i]]['value'] = updated_value
-          # update all current weightings and deltas
-          for j in range(len(sorted_list)):
-            etf_id_dict[sorted_list[j]]['current_ratio'] = etf_id_dict[sorted_list[j]]['value'] / total
-            etf_id_dict[sorted_list[j]]['delta_to_target'] = (etf_id_dict[sorted_list[j]]['current_ratio'] - etf_id_dict[sorted_list[j]]['desired_weighting']) / etf_id_dict[sorted_list[j]]['desired_weighting']
+          etf_id_dict[sorted_list[i]]['current_ratio'] = etf_id_dict[sorted_list[i]]['value'] / total
+          etf_id_dict[sorted_list[i]]['delta_to_target'] = (etf_id_dict[sorted_list[i]]['current_ratio'] - etf_id_dict[sorted_list[i]]['desired_weighting']) / etf_id_dict[sorted_list[i]]['desired_weighting']
           
           # Re-sort based on updated values
           sorted_list = sorted(sorted_list, key=lambda x: (etf_id_dict[x]['delta_to_target']))
