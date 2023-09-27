@@ -17,11 +17,11 @@ else:
 
 	if USE_ENV == 'Y':
 		try:
-			token = ws.login()
+			token, identityId, cookies = ws.login()
 		except:
 			print("An error occured, it's likely your trusted token expired. Please enter the OTP from Google Authenticator")
 			otp = str(input("\n>>> "))
-			token, otp_claim = ws.login(otp)
+			token, identityId, cookies, otp_claim = ws.login(otp)
 			print("\n\n\
 				*****\n\n\
 				TO MAKE LOGGING IN EASIER, ENTER THE BELOW TOKEN IN YOUR ENV FILE AS THE OTP CLAIM\
@@ -32,7 +32,7 @@ else:
 		username = str(input("Enter username: \n>>> "))
 		password = str(input("Enter password: \n>>> "))
 		otp = str(input("Enter OTP: \n>>> "))
-		token, otp_claim = ws.login(otp, username, password)
+		token, identityId, cookies, otp_claim = ws.login(otp, username, password)
 		print("\n\n\
 			*****\n\n\
 			TO MAKE LOGGING IN EASIER, ENTER THE BELOW TOKEN IN YOUR ENV FILE AS THE OTP CLAIM\
@@ -49,7 +49,7 @@ else:
 
 
 # Set up variables, get account information
-watchlist = ws.getWatchlist(tradeToken)
+watchlist = ws.getWatchListV2(tradeToken, identityId, cookies)
 etfs = ws_helpers.getMyPresets()
 etf_dict = ws_helpers.createEtfDict(watchlist, etfs)
 my_holdings = ws.getAccountHoldings(tradeToken)
@@ -90,7 +90,7 @@ B. View Holdings\n  C. Purchase to balance portfolio\n  D. End")
 				print("Invalid entry. Please choose a valid option from the list.")
 				continue
 
-		etf_id_dict= ws_helpers.calculateCurrentPortfolioBalance(account_of_interest, etf_dict, my_holdings)
+		this_account_etf_dict= ws_helpers.calculateCurrentPortfolioBalance(etf_dict, my_holdings[account_of_interest])
 
 		amount_to_contribute = int(input("\n\nAmount to use:\n>>> "))
 
@@ -99,12 +99,12 @@ B. View Holdings\n  C. Purchase to balance portfolio\n  D. End")
 			amount_to_contribute = int(input("Enter a valid amount to use:\n>>> "))
 
 		# Hard coded value whether to print deltas
-		etfs_to_purchase, money_remaining = ws_helpers.calculateSharesToPurchase(my_holdings[my_holding_keys[0]], etf_id_dict, amount_to_contribute, False)
+		etfs_to_purchase, money_remaining = ws_helpers.calculateSharesToPurchase(my_holdings[account_of_interest], this_account_etf_dict, amount_to_contribute)
 
 		print("\n\nIf you want to use $" + str(amount_to_contribute) + ", you should purchase:\n")
 		for key in etfs_to_purchase:
-			if (etf_id_dict[key]['to_buy'] != 0):
-				print(etf_id_dict[key]['symbol'] + ": " + str(etf_id_dict[key]['to_buy']) + " at $" + str(etf_id_dict[key]['price']) + " for " + str(round(etf_id_dict[key]['to_buy'] * etf_id_dict[key]['price'],2)))
+			if (this_account_etf_dict[key]['to_buy'] != 0):
+				print(this_account_etf_dict[key]['symbol'] + ": " + str(this_account_etf_dict[key]['to_buy']) + " at $" + str(this_account_etf_dict[key]['price']) + " for " + str(round(this_account_etf_dict[key]['to_buy'] * this_account_etf_dict[key]['price'],2)))
 
 		print("\nWhich will leave $" + str(round(money_remaining,2)) + " uninvested out of the $" + str(amount_to_contribute) + " total.")
 
@@ -113,11 +113,11 @@ B. View Holdings\n  C. Purchase to balance portfolio\n  D. End")
 		if (to_purchase == "Y"):
 			print("\n")
 			for key in etfs_to_purchase:
-				if (etf_id_dict[key]['to_buy'] != 0):
+				if (this_account_etf_dict[key]['to_buy'] != 0):
 					acc_id = account_of_interest
 					sec_id = key
-					quantity = etf_id_dict[key]['to_buy']
-					price = etf_id_dict[key]['price']
+					quantity = this_account_etf_dict[key]['to_buy']
+					price = this_account_etf_dict[key]['price']
 					data = ws.buy(tradeToken, acc_id, sec_id, quantity, price)
 					print(data['symbol'] + ": " + str(data['quantity']) + " purchased from " + data['account_id'])
 

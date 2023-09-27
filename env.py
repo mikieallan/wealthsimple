@@ -2,6 +2,7 @@
 # Base URLs
 BASE_URL = "https://api.production.wealthsimple.com"
 TRADE_BASE_URL = "https://trade-service.wealthsimple.com"
+GRAPHQL_BASE_URL = "https://my.wealthsimple.com/graphql"
 
 # Misc
 CLIENT_ID = "4da53ac2b03225bed1550eba8e4611e086c7b905a3855e6ed12ea08c246758fa"

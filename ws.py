@@ -38,15 +38,16 @@ class ws:
 
     r = requests.post(url, data=payload, headers=headers)
     data = r.json()
-    #print(data)
 
     access_token = data['access_token']
+    identityId = data['identity_canonical_id']
     bearer = "Bearer " + access_token
+    cookies = r.cookies
 
     if otp!=0:
-      return bearer, r.headers['x-wealthsimple-otp-claim']
+      return bearer, identityId, cookies, r.headers['x-wealthsimple-otp-claim']
 
-    return bearer
+    return bearer, identityId, cookies
 
   ### SWITCH TO TRADE
   def switchToTrade(prev_token):
@@ -64,8 +65,10 @@ class ws:
     r = requests.post(url, data=payload, headers=headers)
     data = r.json()
 
+
     updated_access_token = data['access_token']
     bearer = "Bearer " + updated_access_token
+
 
     return bearer
 
@@ -83,6 +86,38 @@ class ws:
     securities = watchlist['securities']
 
     return securities
+
+  ### GET WATCHLIST GRAPHQL
+  def getWatchListV2(token, identityId, cookies):
+    url = GRAPHQL_BASE_URL 
+    headers = {
+        "content-type": "application/json",
+        "authorization": token,
+        "X-Ws-Profile-Id": "trade",
+        "X-Ws-Session-Id": SESSION_ID
+    }
+
+    payload = json.dumps({
+      "operationName": "FetchWatchlist",
+      "variables": {
+        "identityId": identityId,
+        "cursor": None
+      },
+      
+      "query": 'query FetchWatchlist($identityId: ID!, $first: Int, $after: String, $sort: WatchedSecuritySort) {\n  identity(id: $identityId) {\n    watchedSecurities(first: $first, after: $after, sort: $sort) {\n      totalCount\n      edges {\n        node {\n          id\n          active\n          activeDate\n          allowedOrderSubtypes\n          buyable\n          sellable\n          currency\n          depositEligible\n          inactiveDate\n          historicalQuotes(timeRange: \"1d\") {\n            adjustedPrice\n            currency\n            date\n            securityId\n            time\n            __typename\n          }\n          quote {\n            amount\n            currency\n            last\n            open\n            previousClose\n            securityId\n            __typename\n          }\n          securityType\n          status\n          stock {\n            description\n            name\n            primaryMic\n            symbol\n            ipoState\n            primaryExchange\n            usPtp\n            __typename\n          }\n          wsTradeEligible\n          wsTradeIneligibilityReason\n          optionsEligible\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n'
+    })
+
+    r = requests.post(url, headers=headers, data=payload)
+    
+    data = r.json()
+    edges = data['data']['identity']['watchedSecurities']['edges']
+    watchlist_list = []
+
+    for node in edges:
+        this_node = node['node']
+        watchlist_list.append(this_node)
+
+    return watchlist_list 
 
   ### GET ACCOUNT HOLDINGS
   def getAccountHoldings(token):
